@@ -9,6 +9,10 @@ SCREEN_HEIGHT = 600
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Prism Girlz")
 
+#frame rate
+clock = pygame.time.Clock()
+FPS = 60
+
 # bg image
 bg_image = pygame.image.load("backgroundimage.jpeg")
 def draw_bg():
@@ -23,8 +27,11 @@ player_2 = Player(700, 310)
 run = True
 
 while run:
-
+    clock.tick(FPS)
     draw_bg()
+
+    player_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen)
+    #player_2.move()
 
     # draw players
     player_1.draw(screen)

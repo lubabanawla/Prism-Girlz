@@ -19,7 +19,13 @@ def draw_bg():
     scaled_bg = pygame.transform.scale(bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
     screen.blit(scaled_bg, (0, 0))
 
-# create two instances of fighter
+def health_bar(health, x, y):
+    update_health = health / 100
+    pygame.draw.rect(screen, (0, 0, 0), (x-1, y-1, 403, 33))
+    pygame.draw.rect(screen, (255, 0, 0), (x, y, 400, 30))
+    pygame.draw.rect(screen, (0, 255, 0), (x, y, 400 * update_health, 30))
+
+# create two instances of the players
 player_1 = Player(200, 310)
 player_2 = Player(700, 310)
 
@@ -30,7 +36,11 @@ while run:
     clock.tick(FPS)
     draw_bg()
 
-    player_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen)
+    health_bar(player_1.health, 20, 20)
+    health_bar(player_2.health, 580, 20)
+
+
+    player_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, player_2)
     #player_2.move()
 
     # draw players

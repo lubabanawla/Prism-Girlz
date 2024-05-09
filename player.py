@@ -7,31 +7,36 @@ class Player():
         self.rect = pygame.Rect((x, y, 80, 180))
         self.vel_y = 0
         self.jump = False
-        self.attack = 0
+        self.attack_type = 0
+        self.attacking = False
+        self.health = 100
 
-    def move(self, SCREEN_WIDTH, SCREEN_HEIGHT, surface):
+
+    def move(self, SCREEN_WIDTH, SCREEN_HEIGHT, surface, enemy):
         speed = 10
         change_x = 0
         change_y = 0
         gravity = 2
 
         key = pygame.key.get_pressed()
-        # check for movement
-        if key[pygame.K_a]:
-            change_x = -speed
-        if key[pygame.K_d]:
-            change_x = speed
-        if key[pygame.K_w] and self.jump == False:
-            self.jump = True
-            self.vel_y = -30
 
-        #attack
-        if key[pygame.K_f] or key[pygame.K_g]:
-            self.attack(surface)
-            if key[pygame.K_f]:
-                self.attack = 1
-            elif key[pygame.K_g]:
-                self.attack = 2
+        # check for movement and NOT when attacking
+        if self.attacking == False:
+            if key[pygame.K_a]:
+                change_x = -speed
+            if key[pygame.K_d]:
+                change_x = speed
+            if key[pygame.K_w] and self.jump == False:
+                self.jump = True
+                self.vel_y = -30
+
+            #attack
+            if key[pygame.K_f] or key[pygame.K_g]:
+                self.attack(surface, enemy)
+                if key[pygame.K_f]:
+                    self.attack_type = 1
+                elif key[pygame.K_g]:
+                    self.attack_type = 2
 
         self.vel_y += gravity
         change_y += self.vel_y
@@ -51,8 +56,12 @@ class Player():
         self.rect.x += change_x
         self.rect.y += change_y
 
-    def attack(self, surface):
-        collision_attack = self.Rect(self.rect.centerx, self.rect.centery, 2 * self.rect.width, self.rect.height)
+    def attack(self, surface, enemy):
+        self.attacking = True
+        collision_attack = pygame.Rect((self.rect.centerx, self.rect.y, 2*self.rect.width, self.rect.height))
+        if collision_attack.colliderect(enemy.rect):
+            enemy.health -= 10
+
         pygame.draw.rect(surface, (0, 0, 255), collision_attack)
 
 

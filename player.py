@@ -4,6 +4,7 @@ import pygame.draw
 
 class Player():
     def __init__(self, x, y):
+        self.flip = False
         self.rect = pygame.Rect((x, y, 80, 180))
         self.vel_y = 0
         self.jump = False
@@ -11,7 +12,9 @@ class Player():
         self.attacking = False
         self.health = 100
 
-
+    def load_images(self, sprite_sheet, animation_steps):
+        for i in range(animation):
+            temporary_img = sprite_sheet.subsurface()
     def move(self, SCREEN_WIDTH, SCREEN_HEIGHT, surface, enemy):
         speed = 10
         change_x = 0
@@ -52,17 +55,25 @@ class Player():
             self.jump = False
             change_y = (SCREEN_HEIGHT - 110) - self.rect.bottom
 
+        # make sure the players face eachother
+        if enemy.rect.centerx > self.rect.centerx:
+            self.flip = False
+        else:
+            self.flip = True
+
         # updating the position
         self.rect.x += change_x
         self.rect.y += change_y
 
     def attack(self, surface, enemy):
         self.attacking = True
-        collision_attack = pygame.Rect((self.rect.centerx, self.rect.y, 2*self.rect.width, self.rect.height))
+        collision_attack = pygame.Rect((self.rect.centerx - (2*self.rect.width * self.flip), self.rect.y, 2*self.rect.width, self.rect.height))
         if collision_attack.colliderect(enemy.rect):
             enemy.health -= 10
 
+
         pygame.draw.rect(surface, (0, 0, 255), collision_attack)
+
 
 
     def draw(self, surface):

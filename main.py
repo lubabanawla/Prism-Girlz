@@ -13,8 +13,18 @@ pygame.display.set_caption("Prism Girlz")
 clock = pygame.time.Clock()
 FPS = 60
 
+# player variables for spritesheet
+#player_one_size =
+
 # bg image
 bg_image = pygame.image.load("backgroundimage.jpeg")
+
+# load sprite sheets
+spritesheetdemo_img = pygame.image.load("assets/images/spritesheetdemo/spritesheetdemo.png").convert_alpha()
+
+# animation
+player_one_steps = [5, 9, 5, 5, 1]
+
 def draw_bg():
     scaled_bg = pygame.transform.scale(bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
     screen.blit(scaled_bg, (0, 0))
@@ -26,7 +36,7 @@ def health_bar(health, x, y):
     pygame.draw.rect(screen, (0, 255, 0), (x, y, 400 * update_health, 30))
 
 # create two instances of the players
-player_1 = Player(200, 310)
+player_1 = Player(200, 310, spritesheetdemo_img, player_one_steps)
 player_2 = Player(700, 310)
 
 #game loop

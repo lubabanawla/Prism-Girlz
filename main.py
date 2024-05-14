@@ -14,7 +14,7 @@ clock = pygame.time.Clock()
 FPS = 60
 
 # player variables for spritesheet
-#player_one_size =
+player_one_size = [69, 126]
 
 # bg image
 bg_image = pygame.image.load("backgroundimage.jpeg")
@@ -36,8 +36,8 @@ def health_bar(health, x, y):
     pygame.draw.rect(screen, (0, 255, 0), (x, y, 400 * update_health, 30))
 
 # create two instances of the players
-player_1 = Player(200, 310, spritesheetdemo_img, player_one_steps)
-player_2 = Player(700, 310)
+player_1 = Player(200, 310, player_one_size,spritesheetdemo_img, player_one_steps)
+player_2 = Player(700, 310, player_one_size,spritesheetdemo_img, player_one_steps)
 
 #game loop
 run = True

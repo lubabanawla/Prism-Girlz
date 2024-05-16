@@ -5,6 +5,7 @@ import pygame.draw
 class Player():
     def __init__(self, x, y, data, sprite_sheet, animation_steps):
         self.size = data
+        self.image_scale = data[1]
         self.flip = False
         self.animation_list = self.load_images(sprite_sheet, animation_steps)
         self.action = 0 # what is the player doing
@@ -32,8 +33,10 @@ class Player():
 
                 temporary_img = sprite_sheet.subsurface(clamped_x * self.size[0], clamped_y * self.size[1], self.size[0],
                                                     self.size[1])
-
-            #temporary_img = sprite_sheet.subsurface(x * self.size[0], y * self.size[1], self.size[0], self.size[1])
+                #pygame.transform.scale(temporary_img, (self.size * self.image_scale, self.size * self.image_scale))
+                new_size = (int(self.size[0] * self.image_scale), int(self.size[1] * self.image_scale))
+                pygame.transform.scale(temporary_img, new_size)
+                #temporary_img = sprite_sheet.subsurface(x * self.size[0], y * self.size[1], self.size[0], self.size[1])
                 temporary_img_list.append(temporary_img)
             animation_list.append(temporary_img_list)
         return animation_list

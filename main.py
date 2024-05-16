@@ -15,6 +15,8 @@ FPS = 60
 
 # player variables for spritesheet
 player_one_size = [69, 126]
+player_one_scale = 4
+player_one_data = [player_one_size, player_one_scale]
 
 # bg image
 bg_image = pygame.image.load("backgroundimage.jpeg")

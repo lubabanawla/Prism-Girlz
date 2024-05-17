@@ -1,14 +1,13 @@
 import pygame
 import pygame.draw
 
-
 class Player():
     def __init__(self, x, y, data, sprite_sheet, animation_steps):
         self.size = data
         self.image_scale = data[1]
         self.flip = False
         self.animation_list = self.load_images(sprite_sheet, animation_steps)
-        self.action = 0 # what is the player doing
+        self.action = 0 # what the player doing
         # 0 is idle, 1 is run, 2 is jump, 3 and 4 r the attack, 5 hit, 6 death
         self.frame_index = 0
         self.image = self.animation_list[self.action][self.frame_index]
@@ -95,7 +94,7 @@ class Player():
         collision_attack = pygame.Rect((self.rect.centerx - (2*self.rect.width * self.flip), self.rect.y, 2*self.rect.width, self.rect.height))
         if collision_attack.colliderect(enemy.rect):
             enemy.health -= 10
-
+            # add movement after attack
 
         pygame.draw.rect(surface, (0, 0, 255), collision_attack)
 

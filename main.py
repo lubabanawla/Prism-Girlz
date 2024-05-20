@@ -28,22 +28,25 @@ pygame_icon = pygame.image.load("assets/images/icons/prismgirlzicon.png")
 pygame.display.set_icon(pygame_icon)
 
 # player variables for spritesheet
-player_one_size = [69, 126]
+player_one_size = 292
 player_one_scale = 4
-player_one_data = [player_one_size, player_one_scale]
+player_offset = [72, 56]
+player_one_data = [player_one_size, player_one_scale, player_offset]
 
 # bg image
-bg_image = pygame.image.load("backgroundimage.jpeg")
+bg_image = pygame.image.load("prismgirlz.png")
 
 # load sprite sheets
-spritesheetdemo_img = pygame.image.load("assets/images/spritesheetdemo/spritesheetdemo.png").convert_alpha()
-
+playeroneatksheet = pygame.image.load("assets/images/spritesheets/playerone/playeroneatk.png").convert_alpha()
+playeroneidlesheet = pygame.image.load("assets/images/spritesheets/playerone/playeroneidle.png").convert_alpha()
+playeronerunsheet = pygame.image.load("assets/images/spritesheets/playerone/playeronerun.png").convert_alpha()
+playeronespritesheet = [playeroneatksheet, playeroneidlesheet, playeronerunsheet]
 # animation
-player_one_steps = [5, 9, 5, 5, 1]
+playeronesteps = [5, 5, 6]
 
 # create two instances of the players
-player_1 = Player(200, 310, player_one_size,spritesheetdemo_img, player_one_steps)
-player_2 = Player(700, 310, player_one_size,spritesheetdemo_img, player_one_steps)
+player_1 = Player(200, 310, player_one_data, playeronespritesheet, playeronesteps)
+player_2 = Player(700, 310, player_one_data, playeronespritesheet, playeronesteps)
 
 # load BG music
 pygame.mixer.music.load("assets/sounds/music/fridaytheme.mp3")

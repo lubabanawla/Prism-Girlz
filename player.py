@@ -10,11 +10,11 @@ class Player():
         # 0 is idle, 1 is run, 2 is jump, 3 the attack, 5 hit, 6 death
         self.animation_list = self.load_images(sprite_sheet, animation_steps)
         if self.action == 0:
-            sprite_sheet = sprite_sheet[1]
-        if self.action == 1:
-            sprite_sheet = sprite_sheet[2]
-        if self.action == 3:
             sprite_sheet = sprite_sheet[0]
+        if self.action == 1:
+            sprite_sheet = sprite_sheet[1]
+        if self.action == 3:
+            sprite_sheet = sprite_sheet[2]
         self.frame_index = 0
         self.image = self.animation_list[self.action][self.frame_index]
         self.update_time = pygame.time.get_ticks()
@@ -125,3 +125,7 @@ class Player():
                     self.attacking = False
                     self.action = 0  # Back to idle
             self.image = self.animation_list[self.action][self.frame_index]
+
+
+
+

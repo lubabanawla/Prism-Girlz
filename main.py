@@ -1,5 +1,6 @@
 import pygame
 from player import Player
+import spritesheet
 
 pygame.init()
 
@@ -38,9 +39,9 @@ player_data = [player_size, player_scale, player_offset]
 bg_image = pygame.image.load("prismgirlz.png")
 
 # load sprite sheets
-playeroneatksheet = pygame.image.load("assets/images/spritesheets/playerone/playeroneatk.png").convert_alpha()
-playeroneidlesheet = pygame.image.load("assets/images/spritesheets/playerone/playeroneidle.png").convert_alpha()
-playeronerunsheet = pygame.image.load("assets/images/spritesheets/playerone/playeronerun.png").convert_alpha()
+playeroneatksheet = spritesheet.spritesheet("assets/images/spritesheets/playerone/playeroneatk.png")
+playeroneidlesheet = spritesheet.spritesheet("assets/images/spritesheets/playerone/playeroneidle.png")
+playeronerunsheet = spritesheet.spritesheet("assets/images/spritesheets/playerone/playeronerun.png")
 playeronespritesheet = [playeroneidlesheet, playeronerunsheet, playeroneatksheet]
 # animation
 playeronesteps = [5, 6, 5]

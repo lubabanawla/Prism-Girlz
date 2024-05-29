@@ -1,22 +1,18 @@
 import pygame
 import pygame.draw
+import spritesheet
 
 class Player():
-    def __init__(self, x, y, data, sprite_sheet, animation_steps):
+    def __init__(self, x, y, data, sprite_sheets: list, animation_steps):
         self.size = data
         self.image_scale = data[1]
         self.flip = False
         self.action = 0 # what the player doing
         # 0 is idle, 1 is run, 2 is jump, 3 the attack, 5 hit, 6 death
-        self.animation_list = self.load_images(sprite_sheet, animation_steps)
-        if self.action == 0:
-            sprite_sheet = sprite_sheet[0]
-        if self.action == 1:
-            sprite_sheet = sprite_sheet[1]
-        if self.action == 3:
-            sprite_sheet = sprite_sheet[2]
+        self.animation_list = sprite_sheets
         self.frame_index = 0
-        self.image = self.animation_list[self.action][self.frame_index]
+        current_spritesheet = 0
+        self.image = 0
         self.update_time = pygame.time.get_ticks()
         self.frame_index = 0
         self.rect = pygame.Rect((x, y, 80, 180))
@@ -119,12 +115,13 @@ class Player():
         if pygame.time.get_ticks() - self.update_time > animation_cooldown:
             self.update_time = pygame.time.get_ticks()
             self.frame_index += 1
-            if self.frame_index >= len(self.animation_list[self.action]):
+            current_spritesheet = self.animation_list[self.action]
+            if self.frame_index >= current_spritesheet.size[1]:
                 self.frame_index = 0
                 if self.action == 3:  # Attack animation ends
                     self.attacking = False
                     self.action = 0  # Back to idle
-            self.image = self.animation_list[self.action][self.frame_index]
+            self.image = (self.animation_list[self.action]).image_at([(self.frame_index * 292), 0, (self.frame_index * 292) + 292, 292])
 
 
 

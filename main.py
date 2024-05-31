@@ -67,8 +67,8 @@ p2_idle_4 = pygame.image.load("assets/images/playertwo/idle/Pink_Idle_4.png").co
 player_two_idle = [p2_idle_1, p2_idle_2, p2_idle_3, p2_idle_4]
 
 # create two instances of the players
-player_1 = Player(1, 200, 310, player_data)
-player_2 = Player(2, 700, 310, player_data)
+player_1 = Player(1, 200, 310, False, player_data)
+player_2 = Player(2, 700, 310, True, player_data)
 
 # load BG music
 pygame.mixer.music.load("assets/sounds/music/fridaytheme.mp3")

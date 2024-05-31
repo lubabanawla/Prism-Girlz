@@ -2,16 +2,15 @@ import pygame
 import pygame.draw
 
 class Player():
-    def __init__(self, player, x, y, data):
+    def __init__(self, player, x, y, flip, data):
         self.player = player
         self.size = data
         self.image_scale = data[1]
-        self.flip = False
+        self.flip = flip
         self.offset = data[2]
         self.action = 0 # what the player doing
         # 0 is idle, 1 is run, 2 is jump, 3 the attack, 5 hit, 6 death
         self.frame_index = 0
-        self.image = 0
         self.update_time = pygame.time.get_ticks()
         self.rect = pygame.Rect((x, y, 80, 180))
         self.vel_y = 0
@@ -131,13 +130,15 @@ class Player():
             self.current_frame = 0
 
     def draw(self, surface):
+        img = pygame.transform.flip(self.get_image(), self.flip, False)
+        surface.blit(img, self.rect)
         pygame.draw.rect(surface, (255, 0, 0), self.rect)
 
         #flipped_image = pygame.transform.flip(self.get_image(), self.flip, False)
         #surface.blit(flipped_image, (self.rect.x, self.rect.y))
 
-        img = pygame.transform.flip(self.get_image(), self.flip, False)
-        surface.blit(img, (self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))
+        #img = pygame.transform.flip(self.get_image(), self.flip, False)
+        #surface.blit(img, (self.rect.x, self.rect.y))
 
 
 

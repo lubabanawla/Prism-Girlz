@@ -1,5 +1,6 @@
 import pygame
 import pygame.draw
+import time
 
 class Player():
     def __init__(self, player, x, y, flip, data):
@@ -18,8 +19,9 @@ class Player():
         self.hit = False
         self.jump = False
         self.attacking = False
-        self.attack_cooldown = 0
         self.health = 100
+        self.attack_start_time = 0
+        self.start_time = time.time()
 
         # Load and scale images
         self.player_one_idle = [
@@ -36,9 +38,15 @@ class Player():
             self.scale_image(pygame.image.load(f"assets/images/playerone/atk/Blue_ATK_{i}.png").convert_alpha())
             for i in range(1, 6)
         ]
+
         self.player_two_idle = [
             self.scale_image(pygame.image.load(f"assets/images/playertwo/idle/Pink_Idle_{i}.png").convert_alpha())
             for i in range(1, 5)
+        ]
+
+        self.player_two_run = [
+            self.scale_image(pygame.image.load(f"assets/images/playertwo/run/Pink_Run_{i}.png").convert_alpha())
+            for i in range(1, 7)
         ]
 
         self.current_frame = 0
@@ -53,13 +61,11 @@ class Player():
                 return self.player_one_run[self.current_frame]
             elif self.action == 3:
                 return self.player_one_atk[self.current_frame]
-                self.attacking = False
-                self.attack_cooldown = 20
         if self.player == 2:
             if self.action == 0:
                 return self.player_two_idle[self.current_frame]
-            if self.action == 1:
-                return
+            elif self.action == 1:
+                return self.player_two_run[self.current_frame]
 
     def move(self, SCREEN_WIDTH, SCREEN_HEIGHT, surface, enemy):
         speed = 10
@@ -107,6 +113,9 @@ class Player():
                 if key[pygame.K_l]:
                     self.attack(surface, enemy)
 
+        if (self.attacking) and (pygame.time.get_ticks() - self.attack_start_time) > 300:
+            self.action = 0  # Idle
+            self.attacking = False
 
         self.vel_y += gravity
         change_y += self.vel_y
@@ -128,9 +137,6 @@ class Player():
         else:
             self.flip = True
 
-            # apply attack cooldown
-        if self.attack_cooldown > 0:
-            self.attack_cooldown -= 1
 
         # updating the position
         self.rect.x += change_x
@@ -138,43 +144,40 @@ class Player():
 
     def attack(self, surface, enemy):
         self.action = 3  # Attack
-        while self.attack_cooldown == 0:
-            self.attacking = True
-            self.frame_index = 0
+        self.attacking = True
+        self.attack_start_time = pygame.time.get_ticks()
+
+        while self.attacking:
             collision_attack = pygame.Rect((self.rect.centerx - (2*self.rect.width * self.flip), self.rect.y, 2*self.rect.width, self.rect.height))
             if collision_attack.colliderect(enemy.rect):
                 enemy.health -= 10
+                self.action = 0
                 break
-                #self.attacking = not self.attacking
-                #enemy.hit = True
-            # add movement after attack
 
         pygame.draw.rect(surface, (0, 0, 255), collision_attack)
 
     def next_frame(self):
         self.current_frame += 1
-        current_time = pygame.time.get_ticks()
-        attack_start_time = 0
 
         if self.current_frame == len(self.player_one_idle):
             self.current_frame = 0
         if self.current_frame == len(self.player_one_run):
             self.current_frame = 0
+        if self.current_frame == len(self.player_one_atk):
+            self.current_frame = 0
         if self.current_frame == len(self.player_two_idle):
             self.current_frame = 0
-        if self.current_frame == len(self.player_one_atk):
+        if self.current_frame == len(self.player_two_run):
             self.current_frame = 0
 
         if self.action == 3:
-            if attack_start_time == 0:
-                attack_start_time = current_time  # Set start time when attack begins
-            elapsed_time = current_time - attack_start_time
-            self.current_frame += 1
+            self.run_time = time.time()
+            while self.attacking == True:
+                self.current_time = self.run_time - self.start_time
+            if self.current_time >= 3:
+                self.current_frame += 1
 
-            # If 3 seconds (3000 milliseconds) have passed, end the attack
-            if elapsed_time > 3000:
-                self.attacking = False
-                attack_start_time = 0
+
 
     def draw(self, surface):
         img = pygame.transform.flip(self.get_image(), self.flip, False)

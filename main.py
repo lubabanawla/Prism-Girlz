@@ -55,12 +55,11 @@ frame_time = 300  # 300 milliseconds
 last_frame_update = pygame.time.get_ticks()
 current_time = pygame.time.get_ticks()
 clock = pygame.time.Clock()
-frame = 0
-attack_start_time = 0
 
 while run:
     clock.tick(FPS)
     draw_bg()
+    print(player_1.attack_cooldown)
 
     health_bar(player_1.health, 20, 20)
     health_bar(player_2.health, 580, 20)
@@ -77,9 +76,6 @@ while run:
         player_1.next_frame()
         player_2.next_frame()
         last_frame_update = current_time
-
-    #if Player.action == 3:
-
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

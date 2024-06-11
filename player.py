@@ -11,7 +11,7 @@ class Player():
         self.image_scale = data[1]
         self.flip = flip
         self.action = 0 # what the player doing
-        # 0 is idle, 1 is run, 2 is jump, 3 the attack, 5 hit, 6 death
+        # 0 is idle, 1 is run, 2 is jump, 3 the attack, 4 death
         self.frame_index = 0
         self.update_time = pygame.time.get_ticks()
         self.rect = pygame.Rect((x, y, 80, 180))
@@ -20,6 +20,7 @@ class Player():
         self.jump = False
         self.attacking = False
         self.health = 100
+        self.alive = True
         self.attack_start_time = 0
         self.start_time = time.time()
         self.attack_cooldown = 0
@@ -40,6 +41,11 @@ class Player():
             for i in range(1, 4)
         ]
 
+        self.player_one_death = [
+            self.scale_image(pygame.image.load(f"assets/images/playerone/death/Blue_Death_{i}.png").convert_alpha())
+            for i in range(1, 3)
+        ]
+
         self.player_two_idle = [
             self.scale_image(pygame.image.load(f"assets/images/playertwo/idle/Pink_Idle_{i}.png").convert_alpha())
             for i in range(1, 5)
@@ -55,6 +61,11 @@ class Player():
             for i in range(1, 5)
         ]
 
+        self.player_two_death = [
+            self.scale_image(pygame.image.load(f"assets/images/playertwo/death/Pink_Death_{i}.png").convert_alpha())
+            for i in range(1, 3)
+        ]
+
         self.current_frame = 0
 
     def scale_image(self, image):
@@ -67,6 +78,8 @@ class Player():
                 return self.player_one_run[self.current_frame]
             elif self.action == 3:
                 return self.player_one_atk[self.current_frame]
+            elif self.action == 4:
+                return self.player_one_death[self.current_frame]
         if self.player == 2:
             if self.action == 0:
                 return self.player_two_idle[self.current_frame]
@@ -74,6 +87,8 @@ class Player():
                 return self.player_two_run[self.current_frame]
             elif self.action == 3:
                 return self.player_two_atk[self.current_frame]
+            elif self.action == 4:
+                return self.player_two_death[self.current_frame]
 
     def move(self, SCREEN_WIDTH, SCREEN_HEIGHT, surface, enemy):
         speed = 10
@@ -85,7 +100,7 @@ class Player():
 
 
         # check for movement and NOT when attacking
-        if not self.attacking:
+        if not self.attacking and self.alive:
             if self.player == 1:
                 if key[pygame.K_a]:
                     self.action = 1  # Run
@@ -124,10 +139,6 @@ class Player():
                 if key[pygame.K_l]:
                     self.attack(surface, enemy)
 
-        #if (self.attacking) and (pygame.time.get_ticks() - self.attack_start_time) > 3000:
-         #  self.action = 0  # Idle
-          # self.attacking = False
-
         self.vel_y += gravity
         change_y += self.vel_y
 
@@ -155,12 +166,12 @@ class Player():
         self.rect.x += change_x
         self.rect.y += change_y
 
-    def attack(self, surface, enemy):
-        #self.action = 3  # Attack
-        #self.attacking = True
-        #self.attack_start_time = pygame.time.get_ticks()
-        #self.attack_cooldown = 300
+        if self.health <= 0:
+            self.health = 0
+            self.action = 4
+            self.alive = False
 
+    def attack(self, surface, enemy):
         if self.attack_cooldown == 0:
             self.action = 3  # Attack
             self.attacking = True
@@ -170,7 +181,7 @@ class Player():
             if collision_attack.colliderect(enemy.rect):
                 enemy.health -= 10
                     #break
-            self.attack_cooldown = 300
+            self.attack_cooldown = 120
 
         #pygame.draw.rect(surface, (0, 0, 255), collision_attack)
 
@@ -183,10 +194,17 @@ class Player():
             self.current_frame = 0
         if self.current_frame == len(self.player_one_atk):
             self.current_frame = 0
+        if self.current_frame == len(self.player_one_death):
+            self.current_frame = 1
+
         if self.current_frame == len(self.player_two_idle):
             self.current_frame = 0
         if self.current_frame == len(self.player_two_run):
             self.current_frame = 0
+        if self.current_frame == len(self.player_two_atk):
+            self.current_frame = 0
+        if self.current_frame == len(self.player_two_death):
+            self.current_frame = 1
 
         if self.action == 3:
            current_time = pygame.time.get_ticks()
@@ -197,15 +215,3 @@ class Player():
     def draw(self, surface):
         img = pygame.transform.flip(self.get_image(), self.flip, False)
         surface.blit(img, (self.rect.x - 100, self.rect.y - 90))
-        #pygame.draw.rect(surface, (255, 0, 0), self.rect)
-        #pygame.draw.rect(surface, (255, 0, 0), (self.rect.x, self.rect.y, 150, 20))
-        #flipped_image = pygame.transform.flip(self.get_image(), self.flip, False)
-        #surface.blit(flipped_image, (self.rect.x, self.rect.y))
-
-        #img = pygame.transform.flip(self.get_image(), self.flip, False)
-        #surface.blit(img, (self.rect.x, self.rect.y))
-
-
-
-
-

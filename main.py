@@ -2,7 +2,7 @@ import pygame
 import cv2
 import sys
 from player import Player
-
+from gameround import GameRound
 pygame.init()
 
 def draw_bg():
@@ -69,8 +69,6 @@ if video_boolean:
     pygame.mixer.music.set_volume(initial_volume)
     # play the BG music
     pygame.mixer.music.play(-1, 0.0)
-    # delay music (?) might delete this
-    #pygame.time.delay(500)
 
 # game loop
 run = True
@@ -79,22 +77,18 @@ last_frame_update = pygame.time.get_ticks()
 current_time = pygame.time.get_ticks()
 clock = pygame.time.Clock()
 
-# round
-intro_count = 3
-last_count_update = pygame.time.get_ticks()
-score = [0, 0]#player scores. [P1, P2]
-round_over = False
-ROUND_OVER_COOLDOWN = 2000
-
 count_font = pygame.font.SysFont("Arial", 80)
 score_font = pygame.font.SysFont("Arial", 30)
+
+# create a GameRound instance
+game_round = GameRound(screen, count_font, score_font, victory_img)
 
 # Play video first
 def play_video(cap):
     while cap.isOpened():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                cap.release()
+                cap.release
                 pygame.quit()
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -131,24 +125,19 @@ while run:
     clock.tick(FPS)
     draw_bg()
     # show player stats
-    draw_text("P1: " + str(score[0]), score_font, (255, 0, 0), 20, 60)
-    draw_text("P2: " + str(score[1]), score_font, (255, 0, 0), 580, 60)
+    game_round.draw_scores()
     print(player_1.attack_cooldown)
 
     health_bar(player_1.health, 20, 20)
     health_bar(player_2.health, 580, 20)
 
-    if intro_count <= 0:
+    if game_round.intro_count <= 0:
         # move fighters
         player_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, player_2)
         player_2.move(SCREEN_WIDTH, SCREEN_HEIGHT, screen, player_1)
     else:
         # display count timer
-        draw_text(str(intro_count), count_font, (255, 0, 0), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 3)
-        # update count timer
-        if (pygame.time.get_ticks() - last_count_update) >= 1000:
-            intro_count -= 1
-            last_count_update = pygame.time.get_ticks()
+        game_round.draw_intro_count(SCREEN_WIDTH, SCREEN_HEIGHT)
 
     # draw players
     player_1.draw(screen)
@@ -160,22 +149,10 @@ while run:
         player_2.next_frame()
         last_frame_update = current_time
 
-    if round_over == False:
-        if player_1.alive == False:
-            score[1] += 1
-            round_over = True
-            round_over_time = pygame.time.get_ticks()
-        elif player_2.alive == False:
-            score[0] += 1
-            round_over = True
-            round_over_time = pygame.time.get_ticks()
-    else:
-        screen.blit(victory_img, (360, 150))
-        if pygame.time.get_ticks() - round_over_time > ROUND_OVER_COOLDOWN:
-            round_over = False
-            intro_count = 3
-            player_1 = Player(1, 200, 310, False, player_data)
-            player_2 = Player(2, 700, 310, True, player_data)
+        # Check if the round is over
+    if game_round.check_round_over(player_1, player_2):
+        player_1 = Player(1, 200, 310, False, player_data)
+        player_2 = Player(2, 700, 310, True, player_data)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
